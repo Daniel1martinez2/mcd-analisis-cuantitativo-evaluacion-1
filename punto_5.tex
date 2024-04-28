@@ -1,0 +1,1842 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{}
+    \author{}
+    \date{}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \subsection{\texorpdfstring{\textbf{Examen 1 - Análisis
+Cuantitativo}}{Examen 1 - Análisis Cuantitativo}}\label{examen-1---anuxe1lisis-cuantitativo}
+
+    \subsection{\texorpdfstring{\textbf{{ Solución Pregunta 5
+}}}{ Solución Pregunta 5 }}\label{soluciuxf3n-pregunta-5}
+
+\paragraph{Se desea predecir la resistencia a la compresión del concreto
+(Concrete compressive strength) en función de diferentes variables
+predictoras como el cemento (Cement), la escoria (Slag), la ceniza
+volante (Fly ash), el agua (Water), el superplastificante
+(Superplasticizer), el agregado grueso (Coarse aggregate) y el agregado
+fino (Fine aggregate). Para ello se dispone de un conjunto de datos con
+1030 observaciones. Se desea construir un modelo de regresión lineal
+múltiple para predecir la resistencia a la compresión del concreto en
+función de las variables
+predictoras.}\label{se-desea-predecir-la-resistencia-a-la-compresiuxf3n-del-concreto-concrete-compressive-strength-en-funciuxf3n-de-diferentes-variables-predictoras-como-el-cemento-cement-la-escoria-slag-la-ceniza-volante-fly-ash-el-agua-water-el-superplastificante-superplasticizer-el-agregado-grueso-coarse-aggregate-y-el-agregado-fino-fine-aggregate.-para-ello-se-dispone-de-un-conjunto-de-datos-con-1030-observaciones.-se-desea-construir-un-modelo-de-regresiuxf3n-lineal-muxfaltiple-para-predecir-la-resistencia-a-la-compresiuxf3n-del-concreto-en-funciuxf3n-de-las-variables-predictoras.}
+
+    5.1. Cargar los datos del archivo ``Concrete\_Data.xls'' y examinar las
+características del conjunto de datos.
+
+\textless/span
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Carga de las librerías necesarias para llevar a cabo los procedimientos}
+
+\PY{c+c1}{\PYZsh{}Librerías}
+
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{c+c1}{\PYZsh{} Librerías de visualización}
+
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{express} \PY{k}{as} \PY{n+nn}{px}
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{graph\PYZus{}objects} \PY{k}{as} \PY{n+nn}{go}
+
+
+\PY{c+c1}{\PYZsh{} Matplotlib y  seaborn para gráficos}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}
+
+
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{c+c1}{\PYZsh{} No muestra warnings que no son determinantes para el proceso}
+
+\PY{k+kn}{import} \PY{n+nn}{warnings}
+\PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Se lleva a cabo la carga de la información necesaria para trabajar el caso propuesto}
+
+\PY{n}{data\PYZus{}concrete} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}excel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Concrete\PYZus{}Data.xls}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{sheet\PYZus{}name}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sheet1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    5.2. Realizar un análisis exploratorio de los datos para entender la
+relación entre las variables predictoras y la variable respuesta.
+
+\textless/span
+
+    Inicialmente, se lleva a cabo una identificación de los \textbf{tipos de
+variables} del DataSet.
+
+    \begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Columna
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Descripción
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Tipo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Rango / No.~Categorías
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Cement & Cantidad de cemento en kg/m3 de la mezcla & Cuantitativa
+Continua & Rango: {[}102,0 - 540,0{]} \\
+Blast Furnace Slag & Cantidad de escoria de alto horno en kg/m3 de la
+mezcla & Cuantitativa Continua & Rango: {[}0,0 - 359,4{]} \\
+Fly Ash & Cantidad de ceniza volante en kg/m3 de la mezcla &
+Cuantitativa Continua & Rango: {[}0,0 - 200,1{]} \\
+Water & Cantidad de agua en kg/m3 de la mezcla & Cuantitativa Continua &
+Rango: {[}121,8 - 247,0{]} \\
+Superplasticizer & Cantidad de superplastificante en kg/m3 de la mezcla
+& Cuantitativa Continua & Rango: {[}0,0 - 32,2{]} \\
+Coarse Aggregate & Cantidad de agregado grueso en kg/m3 de la mezcla &
+Cuantitativa Continua & Rango: {[}801,0 - 1145,0{]} \\
+Fine Aggregate & Cantidad de agregado fino en kg/m3 de la mezcla &
+Cuantitativa Continua & Rango: {[}594,0 - 992,6{]} \\
+Age & Edad del concreto en días & Cuantitativa Continua & Rango:
+{[}594,0 - 992,6{]} \\
+Concrete compressive strength & Resistencia a la comprensión del
+concreto en MPa & Cuantitativa Continua & Rango: {[}2,33 - 82,60{]} \\
+\end{longtable}
+
+    \textbf{Dominio de los datos:} teniendo en cuenta la información
+proporcionada, el contexto de los datos hace alusión a los materiales o
+estructuras de concreto que se utilizan para elaborar proyectos de
+construcción como edificaciones, viviendas, entre otros.
+
+Por su parte, las variables como el cemento, la escoria, ceniza volante,
+agua, superplastificante, agregado grueso y fino, corresponden a
+aquellos componentes que se usan para llevar a cabo mezclas de concreto,
+que son indispensables para asegurar caracterísitcas de calidad,
+durabilidad y resistencia en los contextos en los que dichos materiales
+se utilicen.
+
+    \paragraph{Revisión de la estructura del
+dataset:}\label{revisiuxf3n-de-la-estructura-del-dataset}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}concrete}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1030 entries, 0 to 1029
+Data columns (total 9 columns):
+ \#   Column                                                 Non-Null Count
+Dtype
+---  ------                                                 --------------
+-----
+ 0   Cement (component 1)(kg in a m\^{}3 mixture)              1030 non-null
+float64
+ 1   Blast Furnace Slag (component 2)(kg in a m\^{}3 mixture)  1030 non-null
+float64
+ 2   Fly Ash (component 3)(kg in a m\^{}3 mixture)             1030 non-null
+float64
+ 3   Water  (component 4)(kg in a m\^{}3 mixture)              1030 non-null
+float64
+ 4   Superplasticizer (component 5)(kg in a m\^{}3 mixture)    1030 non-null
+float64
+ 5   Coarse Aggregate  (component 6)(kg in a m\^{}3 mixture)   1030 non-null
+float64
+ 6   Fine Aggregate (component 7)(kg in a m\^{}3 mixture)      1030 non-null
+float64
+ 7   Age (day)                                              1030 non-null
+int64
+ 8   Concrete compressive strength(MPa, megapascals)        1030 non-null
+float64
+dtypes: float64(8), int64(1)
+memory usage: 72.6 KB
+    \end{Verbatim}
+
+    \textbf{Análisis:} se identificó que en el dataset otorgado existen un
+total de 1.030 registros que recogen diferentes composiciones de los
+materiales mencionados anteriormente.
+
+Por su parte, se encontraron un total de 9 columnas que corresponden a
+las 8 variables que posteriormente se utilizaran como posibles variables
+predictoras de la novena variable del conjunto de datos: resistencia a
+la comprensión del concreto.
+
+Finalmente, se destaca como se vio en el cuadro anterior que todas las
+variables son cuantitativas continuas y no se identificó la presencia de
+datos nulos.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Buscando optimizar la visualización de la información, renombramos las variables del dataset}
+
+\PY{n}{new\PYZus{}columns} \PY{o}{=} \PY{p}{\PYZob{}}
+
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cement (component 1)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cement}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Blast Furnace Slag (component 2)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Slag}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fly Ash (component 3)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fly\PYZus{}Ash}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Water  (component 4)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Water}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Superplasticizer (component 5)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Superplasticizer}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coarse Aggregate  (component 6)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coarse}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fine Aggregate (component 7)(kg in a m\PYZca{}3 mixture)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fine}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age (day)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Concrete compressive strength(MPa, megapascals) }\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+\PY{p}{\PYZcb{}}
+
+\PY{c+c1}{\PYZsh{} Ejecutando las nuevas etiquetas}
+
+\PY{n}{df\PYZus{}concrete} \PY{o}{=} \PY{n}{data\PYZus{}concrete}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{n}{new\PYZus{}columns}\PY{p}{)}
+
+\PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Cement   Slag  Fly\_Ash  Water  Superplasticizer  Coarse   Fine  Age  \textbackslash{}
+0   540.0    0.0      0.0  162.0               2.5  1040.0  676.0   28
+1   540.0    0.0      0.0  162.0               2.5  1055.0  676.0   28
+2   332.5  142.5      0.0  228.0               0.0   932.0  594.0  270
+3   332.5  142.5      0.0  228.0               0.0   932.0  594.0  365
+4   198.6  132.4      0.0  192.0               0.0   978.4  825.5  360
+
+   Compressive strength
+0             79.986111
+1             61.887366
+2             40.269535
+3             41.052780
+4             44.296075
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \paragraph{Estadísticas Descriptivas (se analizan algunas variables del
+dataset):}\label{estaduxedsticas-descriptivas-se-analizan-algunas-variables-del-dataset}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Construcción de una función que nos permita calcular las estadísticas descriptivas:}
+
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{skew}\PY{p}{,} \PY{n}{kurtosis} 
+
+\PY{k}{def} \PY{n+nf}{tabla\PYZus{}descriptivas\PYZus{}completa} \PY{p}{(}\PY{n}{columnas}\PY{p}{)}\PY{p}{:}
+
+    \PY{n}{tabla\PYZus{}descriptivas\PYZus{}completa}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{columnas}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{n}{tabla\PYZus{}descriptivas\PYZus{}completa}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coef. variation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{columnas}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}\PY{o}{/}\PY{n}{columnas}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+    \PY{n}{tabla\PYZus{}descriptivas\PYZus{}completa}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{skew}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{skew}\PY{p}{(}\PY{n}{columnas}\PY{p}{)}
+    \PY{n}{tabla\PYZus{}descriptivas\PYZus{}completa}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{kurtosis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{kurtosis}\PY{p}{(}\PY{n}{columnas}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{tabla\PYZus{}descriptivas\PYZus{}completa}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{tabla\PYZus{}descriptivas\PYZus{}completa}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                      Cement         Slag      Fly\_Ash        Water  \textbackslash{}
+count            1030.000000  1030.000000  1030.000000  1030.000000
+mean              281.165631    73.895485    54.187136   181.566359
+std               104.507142    86.279104    63.996469    21.355567
+min               102.000000     0.000000     0.000000   121.750000
+25\%               192.375000     0.000000     0.000000   164.900000
+50\%               272.900000    22.000000     0.000000   185.000000
+75\%               350.000000   142.950000   118.270000   192.000000
+max               540.000000   359.400000   200.100000   247.000000
+coef. variation     0.371692     1.167583     1.181027     0.117619
+skew                0.508775     0.799571     0.536662     0.074216
+kurtosis           -0.523959    -0.511495    -1.327884     0.116262
+
+                 Superplasticizer       Coarse         Fine          Age  \textbackslash{}
+count                 1030.000000  1030.000000  1030.000000  1030.000000
+mean                     6.203112   972.918592   773.578883    45.662136
+std                      5.973492    77.753818    80.175427    63.169912
+min                      0.000000   801.000000   594.000000     1.000000
+25\%                      0.000000   932.000000   730.950000     7.000000
+50\%                      6.350000   968.000000   779.510000    28.000000
+75\%                     10.160000  1029.400000   824.000000    56.000000
+max                     32.200000  1145.000000   992.600000   365.000000
+coef. variation          0.962983     0.079918     0.103642     1.383420
+skew                     0.906790    -0.040148    -0.252611     3.264415
+kurtosis                 1.400515    -0.601916    -0.107489    12.104177
+
+                 Compressive strength
+count                     1030.000000
+mean                        35.817836
+std                         16.705679
+min                          2.331808
+25\%                         23.707115
+50\%                         34.442774
+75\%                         46.136287
+max                         82.599225
+coef. variation              0.466407
+skew                         0.416315
+kurtosis                    -0.318142
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \textbf{Análisis:}
+
+En el caso del cemento, se observa que la cantidad media necesaria que
+expone este primer componente para la mezcla de concreto corresponde a
+281.1 kg/m3. Por su parte, el coeficiente de variación correspondiente a
+37,1\%, sugiere una dispersión moderada de los datos.
+
+Con respecto a la escoria, se evidencia que la cantidad promedio en
+términos de kg/m3 es de 73,9. En este caso, se encontró una alta
+dispersión en los datos, explicada por un coeficiente de variación de
+116,8\%. Finalmente, se destaca que el sesgo de 0,80 sugiere una
+asimetría hacia la derecha (positiva).
+
+Teniendo en cuenta la tabla, el 75\% de las mezclas identificadas en el
+dataset vinculan entre sus componentes una cantidad de ceniza volante
+igual o menor a 118,3 kg/m3, por su parte, el coefieciente de variación
+(118,1\%) evidencia la presencia de alta disperisón de los datos.
+
+En el caso del agua, se observa que la cantidad media utilizada en las
+diferentes mezclas de concreto evienciadas en el dataset corresponde
+181,6 kilogramos por metro cúbico. Aquí, se destaca que la curtósis
+correspondiente a 0,11 sugiere una forma de distribución puntiaguda en
+el centro de los datos.
+
+Dado el contexto, la edad del concreto actúa como una variable
+interesante para estudiar la capacidad que tiene el mismo para soportar
+cargas. En ese sentido, se encontró que la edad media del concreto en
+este dataset corresponde a 45,7 días. No obstante, se observó también
+que hay una alta dispersión de los datos explicada por un coeficiente de
+variación de 138,3\%. Finalmente, el 75\% de las observaciones evidencia
+un edad igual o menor a 56 días.
+
+Finalmente, concentrandonos en la variable objetivo, se identificó que
+la resistencia media a la comprensión del concreto se acerca a los 35,8
+MPa, también, a través del coeficiente de variación (46,6\%) se
+evidencia una dispersión moderada de los datos. Finalmente, se destaca
+que la resistencia máxima a la comprensión de este material es de 82,6
+MPa.
+
+    \paragraph{Análisis Gráfico:}\label{anuxe1lisis-gruxe1fico}
+
+Se realizará un análisis basado en la graficación de histogramas para
+conocer visualmente cómo se comparta la distribución de los datos para
+cada una de las variables en el Dataset. También, se propondrá una
+análisis a través de gráficos de caja para revisar la presencia de datos
+nulos y finalmente se analizará cuál es el comportamiento de la
+correlación entre las variables explicativas y la variable objetivo.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Histogramas\PYZsq{}\PYZsq{}\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Configuración del diseño del gráfico}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Configuración de los histogramas para cada variable del Dataset}
+
+\PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{column} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{:}
+    \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{p}{,} \PY{n}{kde}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{legend}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{n}{column}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_5_files/punto_5_18_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Análisis:}
+
+Inicialmente, en términos gráficos se observa que el agua, el agregado
+grueso y el fino, son los componentes que exhiben los mejores
+comportamientos en términos de las distribuciones, lo cual puede generar
+un menor impacto en el sesgo de las predicciones que se pretenden
+realizar para la resistencia de la comprensión del concreto.
+Adicionalmente, la cercanía de estas distribuciones a un comportamiento
+normal, exhibe una menor variabilidad en los datos que serán utilizados
+para el modelo de regresión.
+
+De otro lado, el sesgo positivo que se presenta en la variable ``Edad''
+puede generar posteriormente un problema de subestimación de la
+resistencia a la compresión del concreto, debido a que la alta
+concentración de los datos cercanos a 0 puede generar una menor
+precisión en la predicción de dicha resistencia para el concreto que
+evidencie una edad avanzada en términos de los días.
+
+Ahora bien, teniendo en cuenta que cada registro expone los componentes
+de la mezcla del concreto, se observa que la gran mayoría de las mezclas
+en este conjunto de datos exhibe una cantidad mínima de este material.
+Este resultado, puede representar problemas en la generalización del
+modelo frente a situaciones o casos en los que este componente tenga una
+concentración o presencia más importante en otros tipos de mezclas.
+
+Finalmente, la variable objetivo gráficamente exhibe un comportamiento
+cercano a una distribución normal con un leve sesgo hacia la derecha, lo
+que sugiere que el uso de un modelo lineal podría ser adecuado para la
+estimación de la comprensión del concreto.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Boxplot\PYZsq{}\PYZsq{}\PYZsq{}}
+
+\PY{c+c1}{\PYZsh{} Configuración del diseño del gráfico}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Configuración de los boxplots para cada variable del Dataset}
+\PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{column} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{:}
+    \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{p}{,} \PY{n}{orient}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{orange}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{n}{column}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)} 
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_5_files/punto_5_20_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Análisis:}
+
+A través del análisis gráfico con los Box Plots, se evidencia la
+presencia de algunos valores atípicos en las variables Water,
+Superplasticizer, Fine y Compressive Strenght. Sin embargo, se destaca
+que en la variable Age la presencia y ubicación de los outliers es la
+más alejada del tercer cuartil, es decir donde están concentrado el 75\%
+de los datos.
+
+Para una estimación posterior de un modelo de regresión lineal, este
+comportamiento de datos atípicos podría generar una afectación en la
+precisión de las predicciones que realice el modelo acerca de la
+comprensión del concreto, también, puede generar algún tipo de sesgo en
+la estimación de los coeficientes de cada una de las variables
+explicativas.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Gráficos de Dispersión\PYZsq{}\PYZsq{}\PYZsq{}}
+
+
+\PY{c+c1}{\PYZsh{} Configuración del diseño del gráfico}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{13}\PY{p}{,} \PY{l+m+mi}{13}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{subplots\PYZus{}adjust}\PY{p}{(}\PY{n}{hspace}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Configuración de los gráficos de dispersión para cada variable del Dataset}
+\PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{column} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{:}  \PY{c+c1}{\PYZsh{} Excluir la última columna (variable objetivo)}
+    \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{sns}\PY{o}{.}\PY{n}{scatterplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{navy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{n}{column}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive Strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{column}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{ vs. Compressive Strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_5_files/punto_5_22_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Análisis:}
+
+El análisis gráfico de la dispersión entre las variables explicativas
+frente a la resistencia a la comprensión del concreto, permite observar
+que la única variable que evidencia una forma elíptica es la relación
+entre la variable objetivo y la variable ``Cement''. Este resultado
+indica una posible relación lineal entre las variables mencionadas, lo
+que permitiría aplicar la correlación de pearson para llevar a cabo una
+evualuación de la fuerza y la dirección de dicha relación.
+
+Aquí es importante destacar que, la correlación de Pearson es una medida
+enfocada en capturar relaciones lineales entre variables, por tanto, la
+relación entre el cemento y la resistencia a la comprensión del concreto
+puede ser abordada a través de un modelo lineal.
+
+No obstante, en las otras variables se observan agrupaciones
+irregulares, que necesitarían utilizar modelos o aproximaciones
+alternativas para identificar la relación entre las variables
+explicativas y la variable objetivo (Kendall o Spearman), debido a que
+la correlación de Pearson solo funciona cuando las distribuciones son
+simétricas y es una medida sensible ante valores atípicos.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Matriz de Correlación\PYZsq{}\PYZsq{}\PYZsq{}}
+
+\PY{n}{correlation\PYZus{}matrix} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{correlation\PYZus{}matrix}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                        Cement      Slag   Fly\_Ash     Water  \textbackslash{}
+Cement                1.000000 -0.275193 -0.397475 -0.081544
+Slag                 -0.275193  1.000000 -0.323569  0.107286
+Fly\_Ash              -0.397475 -0.323569  1.000000 -0.257044
+Water                -0.081544  0.107286 -0.257044  1.000000
+Superplasticizer      0.092771  0.043376  0.377340 -0.657464
+Coarse               -0.109356 -0.283998 -0.009977 -0.182312
+Fine                 -0.222720 -0.281593  0.079076 -0.450635
+Age                   0.081947 -0.044246 -0.154370  0.277604
+Compressive strength  0.497833  0.134824 -0.105753 -0.289613
+
+                      Superplasticizer    Coarse      Fine       Age  \textbackslash{}
+Cement                        0.092771 -0.109356 -0.222720  0.081947
+Slag                          0.043376 -0.283998 -0.281593 -0.044246
+Fly\_Ash                       0.377340 -0.009977  0.079076 -0.154370
+Water                        -0.657464 -0.182312 -0.450635  0.277604
+Superplasticizer              1.000000 -0.266303  0.222501 -0.192717
+Coarse                       -0.266303  1.000000 -0.178506 -0.003016
+Fine                          0.222501 -0.178506  1.000000 -0.156094
+Age                          -0.192717 -0.003016 -0.156094  1.000000
+Compressive strength          0.366102 -0.164928 -0.167249  0.328877
+
+                      Compressive strength
+Cement                            0.497833
+Slag                              0.134824
+Fly\_Ash                          -0.105753
+Water                            -0.289613
+Superplasticizer                  0.366102
+Coarse                           -0.164928
+Fine                             -0.167249
+Age                               0.328877
+Compressive strength              1.000000
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Mapa de calor\PYZsq{}\PYZsq{}\PYZsq{}}
+
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{correlation\PYZus{}matrix}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coolwarm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.2f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Matriz de Correlación}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_5_files/punto_5_25_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Análisis:}
+
+A través del método ``Corr'' se identificó que la variable ``Cement'' es
+aquella que presenta la relación más fuerte frente a la resistencia a la
+compresión del concreto. Esto debido a que se evidencia una correlación
+positiva de 0,50, que según Sarabia (2021), sugiere una correlación
+positiva moderada entre la cantidad de cemento utilizada en la mezcla y
+la resistencia del concreto.
+
+Por otro lado, se observó que para las variables ``Superplasticizer''
+(0,37) y ``Age'' (0,33) existe una correlación positiva débil frente a
+la variable objetivo. Estos valores sugieren que a pesar de que dichas
+variables tienen cierta influencia sobre la resistencia del concreto, el
+efecto no es tan determinante como la cantidad de cemento utilizada.
+
+    5.3. Entrenar un modelo de regresión lineal múltiple utilizando el
+conjunto de datos y evalue si hay significancia en el modelo.
+
+\textless/span
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{LinearRegression}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{r2\PYZus{}score}
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+
+\PY{c+c1}{\PYZsh{} División de los datos en variables predictoras (X) y variable objetivo (y)}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Se añade una columna de 1\PYZsq{}s para el término independiente}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Entrenamiento del modelo de regresión lineal utilizando OLS (Mínimos Cuadrados Ordinarios)}
+
+\PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+\PY{n}{results} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Resumen completo del modelo}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{results}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                             OLS Regression Results
+================================================================================
+Dep. Variable:     Compressive strength   R-squared:                       0.615
+Model:                              OLS   Adj. R-squared:                  0.612
+Method:                   Least Squares   F-statistic:                     204.3
+Date:                  Sat, 13 Apr 2024   Prob (F-statistic):          6.76e-206
+Time:                          17:06:00   Log-Likelihood:                -3869.0
+No. Observations:                  1030   AIC:                             7756.
+Df Residuals:                      1021   BIC:                             7800.
+Df Model:                             8
+Covariance Type:              nonrobust
+================================================================================
+====
+                       coef    std err          t      P>|t|      [0.025
+0.975]
+--------------------------------------------------------------------------------
+----
+const              -23.1638     26.588     -0.871      0.384     -75.338
+29.010
+Cement               0.1198      0.008     14.110      0.000       0.103
+0.136
+Slag                 0.1038      0.010     10.245      0.000       0.084
+0.124
+Fly\_Ash              0.0879      0.013      6.988      0.000       0.063
+0.113
+Water               -0.1503      0.040     -3.741      0.000      -0.229
+-0.071
+Superplasticizer     0.2907      0.093      3.110      0.002       0.107
+0.474
+Coarse               0.0180      0.009      1.919      0.055      -0.000
+0.036
+Fine                 0.0202      0.011      1.883      0.060      -0.001
+0.041
+Age                  0.1142      0.005     21.046      0.000       0.104
+0.125
+==============================================================================
+Omnibus:                        5.379   Durbin-Watson:                   1.281
+Prob(Omnibus):                  0.068   Jarque-Bera (JB):                5.305
+Skew:                          -0.174   Prob(JB):                       0.0705
+Kurtosis:                       3.045   Cond. No.                     1.06e+05
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+[2] The condition number is large, 1.06e+05. This might indicate that there are
+strong multicollinearity or other numerical problems.
+    \end{Verbatim}
+
+    \textbf{Análisis:}
+
+Se llevó a cabo el cálculo de un modelo de regresión lineal múltiple a
+través del Método de Mínimos Cuadrados Ordinarios (OLS), de este se
+puede interpretar los siguiente:
+
+*El coeficiente de determinación, indica que el 61\% de la variabilidad
+en la resistencia a la comprensión del concreto es explicada por las
+variables independientes que se incluyeron en el modelo.
+
+*Ahora bien, la prueba de significancia del modelo evalúa si al menos
+una de las variables predictoras tiene un efecto significativo sobre la
+variable dependiente. En este caso, la prueba de hipótesis se plantea de
+la siguiente manera:
+
+\begin{itemize}
+\tightlist
+\item
+  Ho: todos los coeficientes del modelo son iguales a 0
+\item
+  H1: al menos uno de los coeficientes del modelo es diferente de 0
+\end{itemize}
+
+Para este modelo específico el, el valor F es menor al nivel de
+significancia al 5\%, por tanto, se rechaza la hipótesis nula y se puede
+afirmar que al menos una de las variables explicativas del modelo tiene
+un efecto significativo sobre la resistencia a la comprensión del
+concreto (variable dependiente). En resumen, hay evidencia de
+significancia en el modelo propuesto.
+
+    5.4. Analizar la significancia estadística de las variables predictoras
+y construir un modelo de regresión lineal múltiple reducido con las
+variables significativas. Revise su desempeño con respecto al modelo
+completo revisando el Adj R2 y los criterios de información de Akaike
+y de Bayes (AIC y BIC).
+
+\textless/span
+
+    \textbf{Análisis de significancia estadística de variables
+independientes:}
+
+Teniendo en cuenta la salida proporcionada en el punto anterior, en la
+que se plantea un modelo de regresión múltiple que explica la
+resistencia a la comprensión del concreto explicada por el cemento, la
+escoria, la ceniza volante, el agua, el superplastificante, el agregado
+grueso, el agregado fino y la edad del concreto, tenemos lo siguiente:
+
+La signifancia de los coeficientes que acompañan a las variables
+predictoras se evalúa a través del valor ``p'' otorgado en el modelo,
+para este contexto, la prueba de hipótesis se plantea de la siguiente
+manera:
+
+\begin{itemize}
+\tightlist
+\item
+  Ho: el coeficiente es igual a cero
+\item
+  H1: el coeficiente es distinto de cero
+\end{itemize}
+
+Para este modelo específico, el valor p es menor a un nivel de
+significancia correspondiente al 5\% para las variables cemento,
+escoria, ceniza volante, agua, superplastificante, y la edad. Por tanto,
+se rechaza la hipótesis nula y es posible asegurar que los coeficientes
+que acompañan a estas variables predictoras son significativas.
+
+Por su parte, el intercepto y el agregado grueso, evidencian un valor
+crítico mayor al nivel de significancia correspondiente al 5\%. Por
+tanto, no hay evidencia para rechazar la hipótesis nula, lo que explica
+la no significancia de los coeficientes, pues ambos son iguales a cero.
+
+Finalmente, aunque el valor p asociado al coeficiente de la variable
+agregado fino es 0.06 (una cifra menor pero muy cercana al valor
+crítico) no proporciona una evidencia concluyente para rechazar la
+hipótesis nula. Por lo tanto, no se considerará como un coeficiente
+significativamente distinto de cero.
+
+    \textbf{Modelo de Regresión Lineal Reducido:}
+
+Teniendo en cuenta los resultados observados en el análisis de la
+signficancia de los coeficientes se plantea un modelo reducido teniendo
+encuenta las siguientes variables:
+
+\begin{itemize}
+\tightlist
+\item
+  Variable dependiente: Compressive strength
+\item
+  Variables independientes o predictoras: Cement, Slag, Fly\_Ash, Water,
+  Superplasticizer, Age
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Dividir los datos en variables predictoras (X) y variable objetivo (y)}
+\PY{n}{X} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coarse}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fine}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Añadir una columna de unos para el término independiente}
+\PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Entrenar el modelo de regresión lineal utilizando OLS (Mínimos Cuadrados Ordinarios)}
+\PY{n}{model\PYZus{}reduced} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+\PY{n}{results\PYZus{}reduced} \PY{o}{=} \PY{n}{model\PYZus{}reduced}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Mostrar un resumen completo del nuevo modelo}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                             OLS Regression Results
+================================================================================
+Dep. Variable:     Compressive strength   R-squared:                       0.614
+Model:                              OLS   Adj. R-squared:                  0.612
+Method:                   Least Squares   F-statistic:                     271.2
+Date:                  Sat, 13 Apr 2024   Prob (F-statistic):          1.78e-207
+Time:                          17:06:04   Log-Likelihood:                -3871.0
+No. Observations:                  1030   AIC:                             7756.
+Df Residuals:                      1023   BIC:                             7791.
+Df Model:                             6
+Covariance Type:              nonrobust
+================================================================================
+====
+                       coef    std err          t      P>|t|      [0.025
+0.975]
+--------------------------------------------------------------------------------
+----
+const               29.0302      4.212      6.891      0.000      20.764
+37.296
+Cement               0.1054      0.004     24.821      0.000       0.097
+0.114
+Slag                 0.0865      0.005     17.386      0.000       0.077
+0.096
+Fly\_Ash              0.0687      0.008      8.881      0.000       0.054
+0.084
+Water               -0.2183      0.021    -10.332      0.000      -0.260
+-0.177
+Superplasticizer     0.2390      0.085      2.826      0.005       0.073
+0.405
+Age                  0.1135      0.005     20.987      0.000       0.103
+0.124
+==============================================================================
+Omnibus:                        5.233   Durbin-Watson:                   1.286
+Prob(Omnibus):                  0.073   Jarque-Bera (JB):                5.193
+Skew:                          -0.174   Prob(JB):                       0.0745
+Kurtosis:                       3.019   Cond. No.                     4.66e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+[2] The condition number is large, 4.66e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
+
+
+
+
+
+    \end{Verbatim}
+
+    \textbf{Comparación del desempeño de modelo}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+Criterio & RLM Completa & RLM Reducida \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+R2 Ajustado & 0.612 & 0.612 \\
+AIC & 7756 & 7756 \\
+BIC & 7800 & 7791 \\
+\end{longtable}
+
+Los criterios de AIC (Akaike) y BIC (Información de Bayes) son
+indicadores que funcionan para comparar el ajuste de modelos
+estadísticos, según Amaya (2018), el AIC sigue el principio de
+parsimonia que está enfocado en la simplicidad del modelo siempre y
+cuando no se comprometa su capacidad explicativa.
+
+En otras palabras, favorece aquellos modelos que presentan un buen
+equilibrio entre ajuste y simplicidad teniendo en cuenta la menor
+cantidad de parametros posible. Es decir, a la hora de seleccionar cuál
+modelo representa la mejor bondad de ajuste, es importante seleccionar
+aquel que evidencia el menor AIC.
+
+Por otro lado, el criterio de información bayesiano (BIC) es una medida
+que se utiliza para seleccionar el modelo más adecuado, sin embargo,
+esta aproximación penaliza de forma más severa aquellos modelos que
+tienen un mayor número de parametros. Para este criterio, buscamos
+selecionar el modelo que minimiza a BIC (Amaya, 2018).
+
+En conclusión, según los resultados de la tabla anterior, aunque el R2
+ajustado es el mismo en ambos modelos, el modelo reducido demuestra un
+mejor ajuste debido a su menor valor de BIC (7791 \textless{} 7800).
+
+    5.5. Valide los supuestos del modelo εi iid N(0, 2) y en caso de no
+cumplir alguno, proponga una solución. Evalúe la conveniencia de usar un
+enfoque robusto en este caso.
+
+\textless/span
+
+    \paragraph{\texorpdfstring{\textbf{Validación de los supuestos del
+modelo:}}{Validación de los supuestos del modelo:}}\label{validaciuxf3n-de-los-supuestos-del-modelo}
+
+    \textbf{Prueba de Independencia:}
+
+A través del Test de Durbin-Watson se busca probar el supuesto de
+independencia, que plantea la siguiente prueba de hipótesis:
+
+\begin{itemize}
+\tightlist
+\item
+  Ho: no hay autocorrelación de los errores del modelo
+\item
+  H1: existe autocorrelación entre los errores del modelo
+\end{itemize}
+
+La regla general para esta prueba plantea que valores del estadístico
+que se encuentren cercanos a 2 (1.5 - 2.5), plantean la ausencia de
+autocorrelación. Por su parte, si este es cercano a 0 sugiere
+autocorrelación positiva, de otro lado, si es cercano a 4 sugiere
+autocorrelación negativa.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Calcular el estadístico de Durbin\PYZhy{}Watson}
+\PY{n}{durbin\PYZus{}watson\PYZus{}statistic} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{stattools}\PY{o}{.}\PY{n}{durbin\PYZus{}watson}\PY{p}{(}\PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{resid}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Mostrar el resultado}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico de Durbin\PYZhy{}Watson:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{durbin\PYZus{}watson\PYZus{}statistic}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico de Durbin-Watson: 1.2859452611038242
+    \end{Verbatim}
+
+    \textbf{Análisis}
+
+Teniendo en cuenta que el estadístico obtenido es menor a 2 (1.28), no
+hay suficiente evidencia para rechazar Ho, por tanto, se puede afirmar
+que el supuesto de independencia no se cumple para el modelo, debido a
+que se identificó a través de la prueba la presencia de autocorrelación
+positiva entre los residuos.
+
+    \textbf{Prueba de Normalidad:}
+
+A través del Test de Shapiro Wilks se busca probar el supuesto de
+normalidad, que plantea la siguiente prueba de hipótesis:
+
+\begin{itemize}
+\tightlist
+\item
+  Ho: los residuos del modelo siguen una distribución normal
+\item
+  H1: los residuos del modelo no siguen una distribución normal
+\end{itemize}
+
+Para esta prueba específica, un p-value menor al nivel de significancia
+del 5\% sugiere el rechazo de la hipótesis nula.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{stats}
+
+\PY{n}{shapiro\PYZus{}test\PYZus{}statistic}\PY{p}{,} \PY{n}{shapiro\PYZus{}p\PYZus{}value} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{shapiro}\PY{p}{(}\PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{resid}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico de prueba para Shapiro Wilks: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{shapiro\PYZus{}test\PYZus{}statistic}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P\PYZhy{}Value: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{shapiro\PYZus{}p\PYZus{}value}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico de prueba para Shapiro Wilks:  0.9958420991897583
+P-Value:  0.007003553677350283
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{graphics}\PY{n+nn}{.}\PY{n+nn}{gofplots} \PY{k+kn}{import} \PY{n}{qqplot}
+
+\PY{c+c1}{\PYZsh{}Residuos del modelo de regresión reducido}
+
+\PY{n}{residuos} \PY{o}{=} \PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{resid}
+
+\PY{c+c1}{\PYZsh{} Gráfico QQ Plot }
+
+\PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{qqplot}\PY{p}{(}\PY{n}{residuos}\PY{p}{,} \PY{n}{line}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gráfico de QQ Plot \PYZhy{} Residuos Modelo Reducido}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_5_files/punto_5_42_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Análisis}
+
+A partir de la prueba realizada correspondiente a Shapiro Wilks, se
+rechaza la hipótesis nula que planteaba un comportamiento normal en la
+distribución de los errores. Sin embargo, al analizar el gráfico Q-Q
+Plot, se observa que la mayoría de los cuantiles teóricos y observados
+para los términos de error están alineados con la línea de referencia.
+Es decir, que es posible concluir que los términos de error del modelo
+propuesto demuestran o sugieren un comportamiento normal.
+
+    \textbf{Prueba de Media Cero:}
+
+A través del One Sample T-Test se busca probar el supuesto de media cero
+en los errores, que plantea la siguiente prueba de hipótesis:
+
+\begin{itemize}
+\tightlist
+\item
+  Ho: la media de los errores del modelo es cero
+\item
+  H1: la media de los errores del modelo es distinta de cero
+\end{itemize}
+
+Para esta prueba específica, un p-value menor al nivel de significancia
+del 5\% sugiere el rechazo de la hipótesis nula.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}One Sample T\PYZhy{}Test}
+
+\PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{stats}
+
+
+\PY{n}{residuos} \PY{o}{=} \PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{resid}
+
+\PY{c+c1}{\PYZsh{} Prueba de One Sample T\PYZhy{}Test}
+
+\PY{n}{t\PYZus{}statistic}\PY{p}{,} \PY{n}{p\PYZus{}valor} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{ttest\PYZus{}1samp}\PY{p}{(}\PY{n}{residuos}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)}
+
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico t:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{t\PYZus{}statistic}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P\PYZhy{}Value:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{p\PYZus{}valor}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico t: 5.426463010503265e-14
+P-Value: 0.9999999999999567
+    \end{Verbatim}
+
+    \textbf{Análisis}
+
+Teniendo en cuenta el resultado obtenido en el P-Value, no hay
+suficiente evidencia para rechazar la hipótesis nula planteada. Por
+tanto, el supuesto de media cero en los errores del modelo se cumple.
+
+    \textbf{Prueba de Homocedasticidad}
+
+A través de la prueba de Breusch Pagan se busca probar el supuesto
+varianza constante en los errores, que plantea la siguiente prueba de
+hipótesis:
+
+\begin{itemize}
+\tightlist
+\item
+  Ho: la varianza de los errores es constante (homocedasticidad)
+\item
+  H1: la varianza de los errores no es constante (heterocedasticidad)
+\end{itemize}
+
+Para esta prueba específica, un p-value menor al nivel de significancia
+del 5\% sugiere el rechazo de la hipótesis nula.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}A través de este código se utiliza el método .exog que accede a la matriz de variables independientes del modelo}
+
+\PY{n}{bp\PYZus{}test} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{diagnostic}\PY{o}{.}\PY{n}{het\PYZus{}breuschpagan}\PY{p}{(}\PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico de prueba de Breusch\PYZhy{}Pagan:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{bp\PYZus{}test}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P\PYZhy{}Value:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{bp\PYZus{}test}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico de prueba de Breusch-Pagan: 139.18162251188608
+P-Value: 1.4915855798339575e-27
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{results\PYZus{}reduced}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color} \PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{darkblue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mf}{0.3}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_5_files/punto_5_49_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \textbf{Análisis}
+
+A partir del resultado de la prueba de homocedasticidad, se obtuvo un
+valor lo suficientemente pequeño para rechazar la hipótesis nula, es
+decir, hay presencia de heterocedasticidad en los errores.
+Adicionalmente, en términos gráficos se puede concluir que el
+comportamiento de la variabilidad de los errores no es constante.
+
+    \textbf{Conclusiones generales de las pruebas}
+
+A través de la validación realizada de los supuestos asociados a los
+residuales del modelo reducido, se encontró que no se cumplen el supuesto de independenciay homocedasticidad:
+
+\begin{itemize}
+\item
+  En el caso de la falta de independencia en los errores, esto implica
+  revisar otros tipos de modelos que eventualmente puedan capturar de
+  forma más efectiva las estructuras de dependencia que existen en los
+  datos planteados para este ejercicio.
+\item
+  Finalmente, la ausencia de varianza constante en los errores también
+  supone una necesidad de revisar modelos más robustos que puedan
+  capturar los diferentes comportamientos que tienen los errores en
+  términos de variabilidad con respecto a las variables predictoras.
+\end{itemize}
+
+    \paragraph{\texorpdfstring{\textbf{Enfoque
+Robusto:}}{Enfoque Robusto:}}\label{enfoque-robusto}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Paso 1. Estandarización de las variables}
+
+
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing} \PY{k+kn}{import} \PY{n}{StandardScaler}
+
+
+\PY{c+c1}{\PYZsh{} Se seleccionan las variables predictoras del modelo}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cement}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Slag}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fly\PYZus{}Ash}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Water}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Superplasticizer}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Inicializa el objeto StandardScaler}
+
+\PY{n}{scaler} \PY{o}{=} \PY{n}{StandardScaler}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Se ajusta el escalador a los datos y se transforman}
+
+\PY{n}{X\PYZus{}scaled} \PY{o}{=} \PY{n}{scaler}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Creación de nuevos nombres para distinguirlos de los originales}
+
+\PY{n}{new\PYZus{}column\PYZus{}names} \PY{o}{=} \PY{p}{[}\PY{n}{name} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}E}\PY{l+s+s1}{\PYZsq{}} \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Creación de un nuevo data frame con las variables estandarizadas}
+
+\PY{n}{X\PYZus{}scaled\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{X\PYZus{}scaled}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{new\PYZus{}column\PYZus{}names}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Revisamos que se hayan renombrado correctamente las variables}
+
+\PY{n}{X\PYZus{}scaled\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Cement\_E    Slag\_E  Fly\_Ash\_E   Water\_E  Superplasticizer\_E     Age\_E
+0  2.477918 -0.856886  -0.847132 -0.916663           -0.620225 -0.279733
+1  2.477918 -0.856886  -0.847132 -0.916663           -0.620225 -0.279733
+2  0.491443  0.795533  -0.847132  2.175367           -1.038944  3.553066
+3  0.491443  0.795533  -0.847132  2.175367           -1.038944  5.057677
+4 -0.790432  0.678414  -0.847132  0.488805           -1.038944  4.978487
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Añadir la variable predictora original al data frame estandarizado}
+
+\PY{n}{X\PYZus{}scaled\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X\PYZus{}scaled\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Cement\_E    Slag\_E  Fly\_Ash\_E   Water\_E  Superplasticizer\_E     Age\_E  \textbackslash{}
+0  2.477918 -0.856886  -0.847132 -0.916663           -0.620225 -0.279733
+1  2.477918 -0.856886  -0.847132 -0.916663           -0.620225 -0.279733
+2  0.491443  0.795533  -0.847132  2.175367           -1.038944  3.553066
+3  0.491443  0.795533  -0.847132  2.175367           -1.038944  5.057677
+4 -0.790432  0.678414  -0.847132  0.488805           -1.038944  4.978487
+
+   Compressive strength
+0             79.986111
+1             61.887366
+2             40.269535
+3             41.052780
+4             44.296075
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Reordenamos las variables}
+
+\PY{n}{X\PYZus{}scaled\PYZus{}df} \PY{o}{=} \PY{n}{X\PYZus{}scaled\PYZus{}df}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cement\PYZus{}E}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Slag\PYZus{}E}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fly\PYZus{}Ash\PYZus{}E}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Water\PYZus{}E}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Superplasticizer\PYZus{}E}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age\PYZus{}E}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
+\PY{n}{X\PYZus{}scaled\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   Compressive strength  Cement\_E    Slag\_E  Fly\_Ash\_E   Water\_E  \textbackslash{}
+0             79.986111  2.477918 -0.856886  -0.847132 -0.916663
+1             61.887366  2.477918 -0.856886  -0.847132 -0.916663
+2             40.269535  0.491443  0.795533  -0.847132  2.175367
+3             41.052780  0.491443  0.795533  -0.847132  2.175367
+4             44.296075 -0.790432  0.678414  -0.847132  0.488805
+
+   Superplasticizer\_E     Age\_E
+0           -0.620225 -0.279733
+1           -0.620225 -0.279733
+2           -1.038944  3.553066
+3           -1.038944  5.057677
+4           -1.038944  4.978487
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Calculamos las matrices de correlación a través del coeficiente de Spearman}
+
+\PY{n}{corr} \PY{o}{=} \PY{n}{X\PYZus{}scaled\PYZus{}df}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method}\PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{spearman}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{corr}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                      Compressive strength  Cement\_E    Slag\_E  Fly\_Ash\_E  \textbackslash{}
+Compressive strength              1.000000  0.477601  0.162473  -0.077957
+Cement\_E                          0.477601  1.000000 -0.250407  -0.418352
+Slag\_E                            0.162473 -0.250407  1.000000  -0.247313
+Fly\_Ash\_E                        -0.077957 -0.418352 -0.247313   1.000000
+Water\_E                          -0.308371 -0.094417  0.049426  -0.283085
+Superplasticizer\_E                0.347589  0.038397  0.093568   0.454713
+Age\_E                             0.596020  0.004631 -0.017424   0.002802
+
+                       Water\_E  Superplasticizer\_E     Age\_E
+Compressive strength -0.308371            0.347589  0.596020
+Cement\_E             -0.094417            0.038397  0.004631
+Slag\_E                0.049426            0.093568 -0.017424
+Fly\_Ash\_E            -0.283085            0.454713  0.002802
+Water\_E               1.000000           -0.687060  0.090939
+Superplasticizer\_E   -0.687060            1.000000 -0.009753
+Age\_E                 0.090939           -0.009753  1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Renombramos la matriz de covarianzas como Sigma para facilitar el entendimiento respecto a la formula definida para hallar los coeficientes}
+
+\PY{n}{Sigma} \PY{o}{=} \PY{n}{corr}
+
+\PY{n}{Sigma}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                      Compressive strength  Cement\_E    Slag\_E  Fly\_Ash\_E  \textbackslash{}
+Compressive strength              1.000000  0.477601  0.162473  -0.077957
+Cement\_E                          0.477601  1.000000 -0.250407  -0.418352
+Slag\_E                            0.162473 -0.250407  1.000000  -0.247313
+Fly\_Ash\_E                        -0.077957 -0.418352 -0.247313   1.000000
+Water\_E                          -0.308371 -0.094417  0.049426  -0.283085
+Superplasticizer\_E                0.347589  0.038397  0.093568   0.454713
+Age\_E                             0.596020  0.004631 -0.017424   0.002802
+
+                       Water\_E  Superplasticizer\_E     Age\_E
+Compressive strength -0.308371            0.347589  0.596020
+Cement\_E             -0.094417            0.038397  0.004631
+Slag\_E                0.049426            0.093568 -0.017424
+Fly\_Ash\_E            -0.283085            0.454713  0.002802
+Water\_E               1.000000           -0.687060  0.090939
+Superplasticizer\_E   -0.687060            1.000000 -0.009753
+Age\_E                 0.090939           -0.009753  1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Para poder realizar el paso posterior, debemos pasar la matriz anterior a un arreglo tipo Numpy }
+
+\PY{n}{Sigma} \PY{o}{=} \PY{n}{Sigma}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{Sigma}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array([[ 1.        ,  0.47760116,  0.16247343, -0.07795675, -0.30837067,
+         0.34758892,  0.59601954],
+       [ 0.47760116,  1.        , -0.25040725, -0.41835167, -0.09441678,
+         0.03839716,  0.00463067],
+       [ 0.16247343, -0.25040725,  1.        , -0.24731281,  0.04942609,
+         0.093568  , -0.01742443],
+       [-0.07795675, -0.41835167, -0.24731281,  1.        , -0.28308461,
+         0.45471292,  0.00280195],
+       [-0.30837067, -0.09441678,  0.04942609, -0.28308461,  1.        ,
+        -0.68705981,  0.09093886],
+       [ 0.34758892,  0.03839716,  0.093568  ,  0.45471292, -0.68705981,
+         1.        , -0.00975295],
+       [ 0.59601954,  0.00463067, -0.01742443,  0.00280195,  0.09093886,
+        -0.00975295,  1.        ]])
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Matriz de covarianza para las variables de entrada}
+
+\PY{n}{SigmaXX} \PY{o}{=} \PY{n}{Sigma}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}Vector de covarianzas entre las variables de entrada y la variable respuesta}
+
+\PY{n}{SigmaXy} \PY{o}{=} \PY{n}{Sigma}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}Estimación betas de las variables de entrada, que sale de realizar la multiplicación de sigma XX (invertida) por sigma Xy para hallar los betas}
+
+\PY{n}{betas}\PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{matmul}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{inv}\PY{p}{(}\PY{n}{SigmaXX}\PY{p}{)}\PY{p}{,} \PY{n}{SigmaXy}\PY{p}{)}
+
+\PY{n}{betas}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+array([ 0.62688197,  0.38601384,  0.19128868, -0.24395635,  0.03887093,
+        0.62187096])
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Ahora bien, con el objetivo de interpretar los coeficientes en las
+unidades originales del ejercicio, se procede a desestandarizarlos. Este
+proceso se lleva a cabo múltiplicando el coeficiente estandarizado por
+el ratio entre la desviación estandar de la variable respuesta original
+y la desviación estandar de la variable explicativa original según
+corresponda.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Desviaciones estándar originales de las variables predictoras y la variable de dependiente}
+
+\PY{n}{desviacion\PYZus{}y} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Compressive strength}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}  
+\PY{n}{desviaciones\PYZus{}x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cement}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Slag}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Fly\PYZus{}Ash}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Water}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Superplasticizer}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{)}  
+
+\PY{c+c1}{\PYZsh{} Desestandarización de los coeficientes}
+
+\PY{n}{coeficientes\PYZus{}desestandarizados} \PY{o}{=} \PY{n}{betas} \PY{o}{*} \PY{p}{(}\PY{n}{desviacion\PYZus{}y} \PY{o}{/} \PY{n}{desviaciones\PYZus{}x}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Imprimir coeficientes desestandarizados}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coeficientes desestandarizados:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{coeficientes\PYZus{}desestandarizados}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Coeficientes desestandarizados:
+Cement              0.100208
+Slag                0.074741
+Fly\_Ash             0.049934
+Water              -0.190838
+Superplasticizer    0.108708
+Age                 0.164458
+dtype: float64
+    \end{Verbatim}
+
+    Para el cálculo del intercepto, utilizamos la formula que indica la
+resta entre la mediana de la variable dependiente y el producto entre la
+mediana de las variables independientes y los coeficientes estimados en
+el punto anterior. En este caso, usamos la mediana debido a que la misma
+es menos sensible a los valores atípicos que existan en el conjunto de
+datos.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{39}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Calcular las medianas de las variables predictoras estandarizadas}
+
+\PY{n}{x\PYZus{}bar} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cement}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Slag}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fly\PYZus{}Ash}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Water}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Superplasticizer}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Age}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calcular el intercepto}
+
+\PY{n}{intercepto} \PY{o}{=} \PY{n}{df\PYZus{}concrete}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Compressive strength}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{x\PYZus{}bar}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{betas}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Imprimir el intercepto}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercepto:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{intercepto}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Intercepto: -117.65291406345
+    \end{Verbatim}
+
+    \textbf{Análisis}
+
+    \begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+Modelo & RLM OLS & RLM Robusta \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Intercepto & 0.612 & -117.652 \\
+Cement & 0.1054 & 0.100208 \\
+Slag & 0.0865 & 0.074741 \\
+Fly\_Ash & 0.0687 & 0.049934 \\
+Water & -0.2183 & -0.190838 \\
+Superplasticizer & 0.2390 & 0.108708 \\
+Age & 0.1135 & 0.164458 \\
+\end{longtable}
+
+La conveniencia de utilizar un enfoque robusto en este ejercicio, radica
+en la necesidad de evitar los efectos que pueden generar los valores
+atípicos de los datos y corregir los posibles sesgos que pueden ser
+generados por el incumplimineto de los supuestos que surgieron en la
+estimación por mínimos cuadrados ordinarios.
+
+Sin embargo, es importante mencionar que la estabilización de los
+coeficientes a través de métodos robustos no asegura la correción de los
+problemas asociados al incumplimiento de los supuestos del modelo por
+MCO.
+
+    \textbf{Bibliografía}
+
+Amaya Jiménez, L. (2018). Criterio de Akaike para la selección de
+modelos con transformaciones (Doctoral dissertation, Universidad Santo
+Tomás).
+
+Granados, R. M. (2016). Modelos de regresión lineal múltiple. Granada,
+España: Departamento de Economía Aplicada, Universidad de Granada.
+
+Sarabia Collazo, A. A. Indice de inmunidad-inflamación sistémica como
+predictor independiente de morbimortalidad en neumonía por COVID-19.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}

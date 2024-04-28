@@ -1,0 +1,1437 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{}
+    \author{}
+    \date{}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \section{Punto 4}\label{punto-4---juan-camilo-vergara}
+
+Se tiene un conjunto de datos que registra la cantidad de anuncios
+publicitarios en redes sociales que realiza una empresa y su
+correspondiente retorno de inversión en ventas. Se desea determinar si
+existe una relación lineal significativa entre la cantidad de anuncios
+publicitarios y el retorno de inversión.
+
+\begin{itemize}
+\item
+  El conjunto de datos ``publicidad.csv'' consta de 200 observaciones y
+  4 variables que representan los gastos en publicidad (en miles de
+  dólares) y las ventas (en miles de unidades) de un producto en un
+  mercado específico: - TV: Gasto en publicidad en televisión. - Radio:
+  Gasto en publicidad en radio. - Newspaper: Gasto en publicidad en
+  periódicos. - Sales: Número de unidades vendidas (en miles)
+\item
+  Graficar el retorno de inversión (variable ``Sales'') vs la cantidad
+  de anuncios publicitarios por canal (``TV'', ``Radio'',
+  ``Newspaper''). Para ello use la función scatter\_matrix() del paquete
+  pandas e interprete los graficos de las variables dos a dos, teniendo
+  en cuenta que nuestra variable respuesta es ``Sales''.
+\item
+  Calcular el coeficiente de correlación entre todas las variables y
+  mediante un mapa de calor represente estas correlaciones. ¿Interprete
+  las estructuras de dependencia encontradas?
+\item
+  Teniedo en cuenta el punto anterior, elija solo una variable
+  explicativa (``TV'', ``Radio'', o ``Newspaper''; la más conveniente)
+  para modelar las ventas (``Sales''), ajuste el modelo de regresión
+  lineal simple y encuentra la ecuación de la recta. ¿Cuál es el valor
+  del coeficiente de determinación R2? ¿Cómo se interpreta este valor?
+\item
+  Realiza una predicción del retorno de inversión esperado cuando se
+  realizan 5 anuncios por el canal de la variable escogida en el ítem
+  anterior. ¿Cuál es el intervalo de confianza del 95 \% para la
+  predicción?
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}   \PY{c+c1}{\PYZsh{}\PYZsh{} Libreria para manipular y analizar datos}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}  \PY{c+c1}{\PYZsh{}\PYZsh{} Libreria para visualizar}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}   \PY{c+c1}{\PYZsh{}\PYZsh{} Libreria para visualizar}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}  \PY{c+c1}{\PYZsh{}\PYZsh{} Libreria para operaciones numéricas}
+\PY{k+kn}{import} \PY{n+nn}{plotly}  \PY{c+c1}{\PYZsh{}\PYZsh{} Libreria para visualizaciones interactivas}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{ticker} \PY{k}{as} \PY{n+nn}{mtick}  \PY{c+c1}{\PYZsh{}\PYZsh{} función para formatear en visualizaciones}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{skew}\PY{p}{,} \PY{n}{kurtosis}  \PY{c+c1}{\PYZsh{}\PYZsh{} funciones estadísticas}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{norm} \PY{c+c1}{\PYZsh{}\PYZsh{} distribución normal}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{poisson} \PY{c+c1}{\PYZsh{}\PYZsh{} distribución Poisson}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{t} \PY{c+c1}{\PYZsh{}\PYZsh{} distribución t}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{f} \PY{c+c1}{\PYZsh{}\PYZsh{} distribución F}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{ttest\PYZus{}1samp}  \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba t una población}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{ttest\PYZus{}ind} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba t comparación medias}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{shapiro} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba normalidad Shapiro\PYZhy{}Wilks}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{anderson} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba normalidad Anderson\PYZhy{}Darling}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{levene} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba homogeneidad de varianzas Levene}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{mannwhitneyu} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba Mann\PYZhy{}Whitney\PYZhy{}Wilcoxon (comparación dos poblaciones)}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{f\PYZus{}oneway} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba ANOVA de una vía}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{chi2\PYZus{}contingency} \PY{c+c1}{\PYZsh{}\PYZsh{} Prueba chi cuadrado de Pearson}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{pearsonr} \PY{c+c1}{\PYZsh{}\PYZsh{} Coeficiente de correlación de Pearson con prueba}
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k}{as} \PY{n+nn}{sm}  \PY{c+c1}{\PYZsh{}\PYZsh{} estadísticas}
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm1}  \PY{c+c1}{\PYZsh{}\PYZsh{} estadísticas}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{graphics}\PY{n+nn}{.}\PY{n+nn}{gofplots} \PY{k+kn}{import} \PY{n}{qqplot} \PY{c+c1}{\PYZsh{}\PYZsh{} Gráfico QQ plot}
+\PY{k+kn}{import} \PY{n+nn}{pingouin} \PY{k}{as} \PY{n+nn}{pg} \PY{c+c1}{\PYZsh{}\PYZsh{} Librería funciones estadísticas}
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    \section{Primer punto}\label{primer-punto}
+
+\begin{itemize}
+\tightlist
+\item
+  El conjunto de datos ``publicidad.csv'' consta de 200 observaciones y
+  4 variables que representan los gastos en publicidad (en miles de
+  dólares) y las ventas (en miles de unidades) de un producto en un
+  mercado específico: - TV: Gasto en publicidad en televisión. - Radio:
+  Gasto en publicidad en radio. - Newspaper: Gasto en publicidad en
+  periódicos. - Sales: Número de unidades vendidas (en miles)
+\end{itemize}
+
+Solo visualizar la información
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ruta\PYZus{}archivo} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{datasets/publicidad.csv}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{data\PYZus{}publicidad} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{ruta\PYZus{}archivo}\PY{p}{)}
+\PY{n}{data\PYZus{}publicidad} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Unnamed: 0}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Índice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{data\PYZus{}publicidad} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Índice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{data\PYZus{}publicidad}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+        TV  Radio  Newspaper  Sales
+0    230.1   37.8       69.2   22.1
+1     44.5   39.3       45.1   10.4
+2     17.2   45.9       69.3    9.3
+3    151.5   41.3       58.5   18.5
+4    180.8   10.8       58.4   12.9
+..     {\ldots}    {\ldots}        {\ldots}    {\ldots}
+195   38.2    3.7       13.8    7.6
+196   94.2    4.9        8.1    9.7
+197  177.0    9.3        6.4   12.8
+198  283.6   42.0       66.2   25.5
+199  232.1    8.6        8.7   13.4
+
+[200 rows x 4 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 200 entries, 0 to 199
+Data columns (total 4 columns):
+ \#   Column     Non-Null Count  Dtype
+---  ------     --------------  -----
+ 0   TV         200 non-null    float64
+ 1   Radio      200 non-null    float64
+ 2   Newspaper  200 non-null    float64
+ 3   Sales      200 non-null    float64
+dtypes: float64(4)
+memory usage: 6.4 KB
+    \end{Verbatim}
+
+    De esta revisión general de la información. Se puede decir que esta
+información consta de variables cuantitativas continuas, tipo float. Que
+no hay datos nulos, en su totalidad está completa
+
+    \section{Punto 2}\label{punto-2}
+
+Graficar el retorno de inversión (variable ``Sales'') vs la cantidad de
+anuncios publicitarios por canal (``TV'', ``Radio'', ``Newspaper'').
+Para ello use la función scatter\_matrix() del paquete pandas e
+interprete los graficos de las variables dos a dos, teniendo en cuenta
+que nuestra variable respuesta es ``Sales''.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pd}\PY{o}{.}\PY{n}{plotting}\PY{o}{.}\PY{n}{scatter\PYZus{}matrix}\PY{p}{(}\PY{n}{data\PYZus{}publicidad}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_7_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Se puede analizar lo siguiente:
+
+Análisis entre variables Y con X
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Sales vs TV Al observar el gráfico de dispersión entre las unidades
+  vendidas y el gasto en miles de dolares en Televisión, se puede
+  observar una relación significativa entre las dos variables. No podría
+  decir aún con exactitud que tipo de\\
+  relación tienen, si lineal u otra, pareciera ser una relación lineal
+  con cierta variación.
+\item
+  Sales vs Radio Al observar el gráfico de dispersión entre las unidades
+  vendidas y el gasto en miles de dolares en radio, se puede observar
+  una relación entre ambas variables, sin embargo con una mayor
+  dispersión, es decir me hace pensar que tendría una menor correlación
+  que el gasto en TV analizado anteriormente. En este caso también
+  pensaría que se trata de una relación lineal pero menos fuerte
+\item
+  Sales vs Newspaper Al observar el gráfico de dispersión entre las
+  unidades vendidas y el gasto en miles de dolares en Periódico se
+  observa una mayor dispersión de los datos y eso indicaría menor
+  correlación entre estas variables. Me hace pensar que la correlación
+  más fuerte vendría a estar en las variables de gasto de publicidad en
+  miles de dolares en TV y en Radio
+\end{enumerate}
+
+Adicional a lo anterior también se puede ver la dependencia de las
+variables explicativas X entre ellas. Por ejemplo:
+
+Análisis entre variables X con X
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\item
+  TV vs Radio No se observa ninguna dependencia de estas variables, la
+  una con la otra. los datos se encuentran totalmente dispersos y esto
+  me hace pensar que no habría problemas de multicolinealidad entre
+  ellas para un futuro modelo de regresión
+\item
+  TV vs Newspaper No se observa tampoco ninguna dependencia entre estas
+  variables. Los datos se encuentran totalmente dispersos y esto me hace
+  pensar que tampoco se deberían de presentar problemas de
+  multicolinealidad entre estas variables en caso de formar parte de un
+  modelo de regresión
+\item
+  Radio vs Newspaper No se observa tampoco ninguna dependencia entre
+  estas variables. Los datos se encuentran totalmente dispersos y esto
+  me hace pensar que tampoco se deberían de presentar problemas de
+  multicolinealidad entre estas variables en caso de formar parte de un
+  modelo de regresión
+\end{enumerate}
+
+Finalmente, se puede analizar la distribución de los datos de cada uno
+en los histogramas de la diagonal
+
+De esto se puede observar que la variable Y de unidades vendidas sigue
+una distribución aparentemente normal, con un leve sesgo negativo.
+
+Las variables X de Gasto en miles de dolares en TV y Radio no
+presentan una aparente distribución de los datos
+
+y la variable X de Gasto en miles de dolares en Newspaper aparenta
+presentar una distribución F de los datos o al menos una distribución
+mas sesgada de la normalidad
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{tabla\PYZus{}descriptivas}\PY{p}{(}\PY{n}{columnas}\PY{p}{:} \PY{n+nb}{list}\PY{p}{)}\PY{p}{:}
+  \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{columnas}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+  \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coef. variation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{columnas}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}\PY{o}{/}\PY{n}{columnas}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+  \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{skew}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{skew}\PY{p}{(}\PY{n}{columnas}\PY{p}{)}
+  \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{kurtosis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{kurtosis}\PY{p}{(}\PY{n}{columnas}\PY{p}{)}
+  \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mediana}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{columnas}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)}
+
+  \PY{c+c1}{\PYZsh{} Fix the indentation for the loop}
+  \PY{k}{for} \PY{n}{columna} \PY{o+ow}{in} \PY{n}{columnas}\PY{p}{:}
+      \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{coef. variation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{columna}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{n}{columna}\PY{p}{]}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)} \PY{o}{/} \PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{n}{columna}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+      \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{skew}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{columna}\PY{p}{]} \PY{o}{=} \PY{n}{skew}\PY{p}{(}\PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{n}{columna}\PY{p}{]}\PY{p}{)}
+      \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{kurtosis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{columna}\PY{p}{]} \PY{o}{=} \PY{n}{kurtosis}\PY{p}{(}\PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{n}{columna}\PY{p}{]}\PY{p}{)}
+      \PY{n}{tabla\PYZus{}descriptivas}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mediana}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{=}\PY{n}{columnas}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{)}
+  \PY{k}{return} \PY{n}{tabla\PYZus{}descriptivas}
+
+\PY{n}{tabla\PYZus{}descriptivas}\PY{p}{(}\PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{TV}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Radio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Newspaper}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                         TV       Radio   Newspaper       Sales
+count            200.000000  200.000000  200.000000  200.000000
+mean             147.042500   23.264000   30.554000   14.022500
+std               85.854236   14.846809   21.778621    5.217457
+min                0.700000    0.000000    0.300000    1.600000
+25\%               74.375000    9.975000   12.750000   10.375000
+50\%              149.750000   22.900000   25.750000   12.900000
+75\%              218.825000   36.525000   45.100000   17.400000
+max              296.400000   49.600000  114.000000   27.000000
+coef. variation    0.583874    0.638188    0.712791    0.372077
+skew              -0.069328    0.093467    0.887996    0.404508
+kurtosis          -1.225897   -1.258962    0.603527   -0.428570
+mediana          149.750000   22.900000   25.750000   12.900000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Adicional a lo anterior, Se puede observar la siguiente información:
+
+\begin{itemize}
+\tightlist
+\item
+  La media y la mediana no son muy diferentes, eso hace pensar que los
+  datos no se encuentran tan sesgados
+\item
+  La kurtosis de todos los valores no es tan grande, lo que puede
+  significar una baja dispersión de los datos. Sin embargo para TV,
+  Radio y Ventas se observa una kurtosis negativa que indica que la
+  distribución de los datos tiene a estar más aplanada, en cambio en el
+  Periódico se muestra una distribución más alargada en su centro.
+\item
+  El skew mide el grado de asimetría de los datos. En este caso para el
+  Radio, Periódico y ventas se presenta unos valores positivos que
+  indican distribución sesgada hacia la izquierda y el valor negativo de
+  TV indica lo contrario, un sesgo hacia la derecha
+\item
+  El coeficiente de variación de cada variable, vista
+  independientemente, indica que tan dispersos se encuentran los datos
+  con respecto a su punto central. En este caso se observa que en
+  general todas las variables tienen una dispersión alta
+\end{itemize}
+
+    \section{Punto 3}\label{punto-3}
+
+Calcular el coeficiente de correlación entre todas las variables y
+mediante un mapa de calor represente estas correlaciones. ¿Interprete
+las estructuras de dependencia encontradas?
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pearson}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                 TV     Radio  Newspaper     Sales
+TV         1.000000  0.054809   0.056648  0.782224
+Radio      0.054809  1.000000   0.354104  0.576223
+Newspaper  0.056648  0.354104   1.000000  0.228299
+Sales      0.782224  0.576223   0.228299  1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{corrmat} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pearson}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{hm} \PY{o}{=} \PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{corrmat}\PY{p}{,} 
+                 \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                 \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                 \PY{n}{square}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                 \PY{n}{fmt}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.2f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                 \PY{n}{annot\PYZus{}kws}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{10}\PY{p}{\PYZcb{}}\PY{p}{,} 
+                 \PY{n}{yticklabels}\PY{o}{=}\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{columns}\PY{p}{,} 
+                 \PY{n}{xticklabels}\PY{o}{=}\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{columns}\PY{p}{,} 
+                 \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Spectral\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_13_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{spearman}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                 TV     Radio  Newspaper     Sales
+TV         1.000000  0.056123   0.050840  0.800614
+Radio      0.056123  1.000000   0.316979  0.554304
+Newspaper  0.050840  0.316979   1.000000  0.194922
+Sales      0.800614  0.554304   0.194922  1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{corrmat} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{spearman}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{hm} \PY{o}{=} \PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{corrmat}\PY{p}{,} 
+                 \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                 \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                 \PY{n}{square}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                 \PY{n}{fmt}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.2f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
+                 \PY{n}{annot\PYZus{}kws}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{10}\PY{p}{\PYZcb{}}\PY{p}{,} 
+                 \PY{n}{yticklabels}\PY{o}{=}\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{columns}\PY{p}{,} 
+                 \PY{n}{xticklabels}\PY{o}{=}\PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{columns}\PY{p}{,} 
+                 \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Spectral\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_15_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    En primer lugar es importante decir que se utilizó dos tipos de
+correlaciones: una Pearson o una Spearman. Entendiendo que Pearson
+unicamente describe correlación de manera efectiva si se trata de una
+relación lineal entre las variables. Mientras que Spearman puede indicar
+una relación entre las variables que no necesariamente es lineal.
+
+Cada uno tiene sus valores de correlaciones entre variables y
+graficamente un diagrama de calor que indica una correlación fuerte para
+colores entre Naranja y Rojo que va desde el 0.75 al 1. y una
+correlación moderada en el color amarillo. El resto de colores ya
+indican baja o cero correlación.
+
+En este caso puntual tanto para Pearson como Spearman se detecta una
+correlación fuerte entre la variable explciativa ``X'' de gasto de
+publicidad en miles de dolares en TV con la variable ``Y'' de unidades
+vendidas Luego le sigue con una correlación moderada entre la variable
+explicativa ``X'' de gasto de publicidad en miles de dolares en Radio y
+la variable ``Y'' en unidades vendidas.
+
+El resto de variables realmente no presentan ninguna correlación con la
+variable ``Y''
+
+Por lo tanto, se puede asumir que la correlación es lineal entre estas
+variables x con Y y que la correlación más fuerte es con ``TV''
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Graficar el diagrama de dispersión con Seaborn}
+\PY{n}{sns}\PY{o}{.}\PY{n}{scatterplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{TV}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{data\PYZus{}publicidad}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Añadir título}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Diagrama de Dispersión}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Mostrar el gráfico}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_17_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \section{Punto 4}\label{punto-4}
+
+Teniedo en cuenta el punto anterior, elija solo una variable explicativa
+(``TV'', ``Radio'', o ``Newspaper''; la más conveniente) para modelar
+las ventas (``Sales''), ajuste el modelo de regresión lineal simple y
+encuentra la ecuación de la recta. ¿Cuál es el valor del coeficiente de
+determinación R2? ¿Cómo se interpreta este valor?
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+
+\PY{n}{data\PYZus{}modelo} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Radio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Newspaper}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{data\PYZus{}modelo}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{data\PYZus{}modelo}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+\PY{n}{result} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{result}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                  Sales   R-squared:                       0.612
+Model:                            OLS   Adj. R-squared:                  0.610
+Method:                 Least Squares   F-statistic:                     312.1
+Date:                Tue, 09 Apr 2024   Prob (F-statistic):           1.47e-42
+Time:                        20:50:44   Log-Likelihood:                -519.05
+No. Observations:                 200   AIC:                             1042.
+Df Residuals:                     198   BIC:                             1049.
+Df Model:                           1
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          7.0326      0.458     15.360      0.000       6.130       7.935
+TV             0.0475      0.003     17.668      0.000       0.042       0.053
+==============================================================================
+Omnibus:                        0.531   Durbin-Watson:                   1.935
+Prob(Omnibus):                  0.767   Jarque-Bera (JB):                0.669
+Skew:                          -0.089   Prob(JB):                        0.716
+Kurtosis:                       2.779   Cond. No.                         338.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+    \end{Verbatim}
+
+    Con este modelo de regresión se obtiene un R2 ajustado de 0.61. Esto
+significa que aproximadamente el 61\% de variabilidad en las unidades
+vendidas (variable y) se puede explicar por el gasto de publicidad en TV
+(variable x)
+
+Adicional se puede observar que el valor P es menor que 0.05 y por ello
+se puede concluir que el modelo es estadísticamente significativo.
+Adicional el valor P de la variable TV es menor a 0.05
+
+    \section{Prueba de Independencia}\label{prueba-de-independencia}
+
+\begin{itemize}
+\tightlist
+\item
+  Ho = Los Ei son independientes --\textgreater{} que significa que la
+  correlación de un Ei con un Ei+1 es igual a cero (O sea que no hay
+  autocorrelación)
+\item
+  Ha = La correlación de un Ei con un Ei+1 NO es igual a cero
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Prueba de Independencia\PYZdq{}\PYZdq{}\PYZdq{}}
+
+\PY{c+c1}{\PYZsh{} Añadir una constante a la matriz de predictores para ajustar el intercepto}
+\PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Ajustar el modelo de regresión}
+\PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calcular los residuos del modelo}
+\PY{n}{resid} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{resid}
+
+\PY{c+c1}{\PYZsh{} Calcular la estadística de Durbin\PYZhy{}Watson}
+\PY{n}{durbin\PYZus{}watson\PYZus{}statistic} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{stattools}\PY{o}{.}\PY{n}{durbin\PYZus{}watson}\PY{p}{(}\PY{n}{resid}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Imprimir el valor de la estadística Durbin\PYZhy{}Watson}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadística de Durbin\PYZhy{}Watson:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{durbin\PYZus{}watson\PYZus{}statistic}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Realizar una prueba de hipótesis para determinar la significancia}
+\PY{n}{alpha} \PY{o}{=} \PY{l+m+mf}{0.05}
+
+\PY{c+c1}{\PYZsh{} Calcular el valor p para la prueba de Durbin\PYZhy{}Watson}
+\PY{n}{dw\PYZus{}test\PYZus{}p\PYZus{}value} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{durbin\PYZus{}watson}\PY{p}{(}\PY{n}{resid}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color} \PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{darkblue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mf}{0.3}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadística de Durbin-Watson: 1.93468853728236
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_22_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Como el estadístico de durbin watson está entre 1.5 y 2.5, entonces no
+habría evidencia suficiente para rechazar la Ho, por lo que se cumple el
+supuesto de independencia. Adicional, gráficamente también se puede
+observar que el comportamiento de los residuos es completamente
+aleatorio y no marca ninguna tendencia.
+
+    \section{Prueba de Normalidad}\label{prueba-de-normalidad}
+
+\begin{itemize}
+\tightlist
+\item
+  Ho = Ei sigue comportamiento normal
+\item
+  Ha = Ei NO sigue comportamiento normal
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Prueba de Normalidad\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{stats}
+
+\PY{n}{shapiro\PYZus{}test\PYZus{}statistic}\PY{p}{,} \PY{n}{shapiro\PYZus{}p\PYZus{}value} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{shapiro}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{resid}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico de prueba para Shapiro Wilks: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{shapiro\PYZus{}test\PYZus{}statistic}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P\PYZhy{}Value: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{shapiro\PYZus{}p\PYZus{}value}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico de prueba para Shapiro Wilks:  0.9905306696891785
+P-Value:  0.21332456171512604
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Gráfico QQ Plot }
+
+\PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{qqplot}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{n}{line}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gráfico de QQ Plot \PYZhy{} Residuos Modelo Reducido}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_26_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Conclusión: Como el valor p es mayor que alpha (0.05), entonces no hay
+evidencia suficiente para rechazar Ho, por lo que el comportamiento
+sigue una distribución normal y se cumple el supuesto de normalidad.
+Adicionalmente, al realizar el gráfico QQ Plot se puede observar que
+estos siguen una linea recta lo que también implica que se cumple el
+supuesto de normalidad
+
+    \section{Prueba Media Cero}\label{prueba-media-cero}
+
+\begin{itemize}
+\tightlist
+\item
+  Ho = el valor esperado de los Ei es igual a cero (promedio igual a
+  cero)
+\item
+  Ha = el valor esperado de los Ei NO es igual a cero (promedio NO igual
+  a cero)
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Prueba media cero\PYZdq{}\PYZdq{}\PYZdq{}}
+
+\PY{c+c1}{\PYZsh{} Prueba de One Sample T\PYZhy{}Test}
+
+\PY{n}{t\PYZus{}statistic}\PY{p}{,} \PY{n}{p\PYZus{}value} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{ttest\PYZus{}1samp}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)}
+
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico t:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{t\PYZus{}statistic}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P\PYZhy{}Value:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{p\PYZus{}value}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico t: -1.901234536356806e-14
+P-Value: 0.9999999999999849
+    \end{Verbatim}
+
+    Conclusión: Como el valor p es mayor que alpha (0.05), entonces no hay
+evidencia suficiente para rechazar Ho, por lo que el promedio entonces
+es igual a cero y se cumple el supuesto de media cero. El gráfico de los
+residuos presentado arriba también aplica para este supuesto e indica
+que los residuos siguen un comportamiento aleatorio al rededor del cero
+lo que también indica que se cumple este supuesto
+
+    \section{Prueba de Homocedasticidad}\label{prueba-de-homocedasticidad}
+
+\begin{itemize}
+\tightlist
+\item
+  Ho = Varianzas de Ei constante
+\item
+  Ha = Varianzas de Ei NO constante
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{bp\PYZus{}test} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{diagnostic}\PY{o}{.}\PY{n}{het\PYZus{}breuschpagan}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Estadístico de prueba de Breusch\PYZhy{}Pagan:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{bp\PYZus{}test}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P\PYZhy{}Value:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{bp\PYZus{}test}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color} \PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{darkblue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mf}{0.3}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Estadístico de prueba de Breusch-Pagan: 48.037965662293594
+P-Value: 4.180455907755742e-12
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{punto_4_files/punto_4_32_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Conclusión: En la prueba de homocedasticidad, el valor P es menor que el
+aplha (0.05). lo que indica que se rechaza Ho y por lo tanto hay
+evidencia suficiente para decir que las varianzas no son constantes.
+Esto también se puede evidenciar porque el coeficiente de variación de
+todas las variables era muy alto al momento de hacer el analisis
+exploratorio de los datos, en la primera sección del ejercicio.
+
+Por este motivo se propone realizar un modelo robusto que permita
+penalizar las varianzas y de esta manera forzar la homocedasticidad
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+
+\PY{n}{data\PYZus{}modelo} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Radio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Newspaper}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{data\PYZus{}modelo}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{data\PYZus{}modelo}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+\PY{n}{result} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo Ajustado}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{result}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{rlm\PYZus{}model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{RLM}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+
+\PY{n}{rlm\PYZus{}results} \PY{o}{=} \PY{n}{rlm\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo Robusto}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{rlm\PYZus{}results}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Modelo Ajustado
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                  Sales   R-squared:                       0.612
+Model:                            OLS   Adj. R-squared:                  0.610
+Method:                 Least Squares   F-statistic:                     312.1
+Date:                Thu, 11 Apr 2024   Prob (F-statistic):           1.47e-42
+Time:                        22:21:02   Log-Likelihood:                -519.05
+No. Observations:                 200   AIC:                             1042.
+Df Residuals:                     198   BIC:                             1049.
+Df Model:                           1
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          7.0326      0.458     15.360      0.000       6.130       7.935
+TV             0.0475      0.003     17.668      0.000       0.042       0.053
+==============================================================================
+Omnibus:                        0.531   Durbin-Watson:                   1.935
+Prob(Omnibus):                  0.767   Jarque-Bera (JB):                0.669
+Skew:                          -0.089   Prob(JB):                        0.716
+Kurtosis:                       2.779   Cond. No.                         338.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+Modelo Robusto
+    \end{Verbatim}
+ 
+            
+\prompt{Out}{outcolor}{26}{}
+    
+    \begin{center}
+\begin{tabular}{lclc}
+\toprule
+\textbf{Dep. Variable:}  &      Sales       & \textbf{  No. Observations:  } &      200    \\
+\textbf{Model:}          &       RLM        & \textbf{  Df Residuals:      } &      198    \\
+\textbf{Method:}         &       IRLS       & \textbf{  Df Model:          } &        1    \\
+\textbf{Norm:}           &      HuberT      & \textbf{                     } &             \\
+\textbf{Scale Est.:}     &       mad        & \textbf{                     } &             \\
+\textbf{Cov Type:}       &        H1        & \textbf{                     } &             \\
+\textbf{Date:}           & Thu, 11 Apr 2024 & \textbf{                     } &             \\
+\textbf{Time:}           &     22:21:02     & \textbf{                     } &             \\
+\textbf{No. Iterations:} &        23        & \textbf{                     } &             \\
+\bottomrule
+\end{tabular}
+\begin{tabular}{lcccccc}
+               & \textbf{coef} & \textbf{std err} & \textbf{z} & \textbf{P$> |$z$|$} & \textbf{[0.025} & \textbf{0.975]}  \\
+\midrule
+\textbf{const} &       6.8843  &        0.484     &    14.235  &         0.000        &        5.936    &        7.832     \\
+\textbf{TV}    &       0.0491  &        0.003     &    17.278  &         0.000        &        0.044    &        0.055     \\
+\bottomrule
+\end{tabular}
+%\caption{Robust linear Model Regression Results}
+\end{center}
+
+If the model instance has been used for another fit with different fit parameters, then the fit options might not be the correct ones anymore .
+
+    
+
+    Se puede observar que el modelo resultante tiene un R2 de 0.612 que es
+bueno e indica que los valores que se predigan de unidades vendidas (y)
+se pueden explicar en un 61.5\% por la variable de gasto en publicidad
+en TV (x).
+
+Adicional no se encuentra valor p grande de la variable por lo que el
+modelo se ajusta bien.
+
+    De esta manera entonces se obtiene un modelo con la siguiente función:
+
+Y(unidades vendidas) = 6.8843 + 0.0491X(Gasto en miles de dolares)
+
+    \section{Punto 5}\label{punto-5}
+
+Realiza una predicción del retorno de inversión esperado cuando se
+realizan 5 anuncios por el canal de la variable escogida en el ítem
+anterior. ¿Cuál es el intervalo de confianza del 95 \% para la
+predicción?
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{tsa}\PY{n+nn}{.}\PY{n+nn}{statespace}\PY{n+nn}{.}\PY{n+nn}{sarimax} \PY{k+kn}{import} \PY{n}{SARIMAX}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+
+\PY{n}{data\PYZus{}modelo} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Radio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Newspaper}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{data\PYZus{}modelo}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{data\PYZus{}modelo}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+
+\PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+\PY{n}{result} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo Ajustado}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{result}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{rlm\PYZus{}model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{RLM}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X}\PY{p}{)}
+
+\PY{n}{rlm\PYZus{}results} \PY{o}{=} \PY{n}{rlm\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo Robusto}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{rlm\PYZus{}results}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Modelo Ajustado
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                  Sales   R-squared:                       0.612
+Model:                            OLS   Adj. R-squared:                  0.610
+Method:                 Least Squares   F-statistic:                     312.1
+Date:                Sat, 13 Apr 2024   Prob (F-statistic):           1.47e-42
+Time:                        14:33:28   Log-Likelihood:                -519.05
+No. Observations:                 200   AIC:                             1042.
+Df Residuals:                     198   BIC:                             1049.
+Df Model:                           1
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          7.0326      0.458     15.360      0.000       6.130       7.935
+TV             0.0475      0.003     17.668      0.000       0.042       0.053
+==============================================================================
+Omnibus:                        0.531   Durbin-Watson:                   1.935
+Prob(Omnibus):                  0.767   Jarque-Bera (JB):                0.669
+Skew:                          -0.089   Prob(JB):                        0.716
+Kurtosis:                       2.779   Cond. No.                         338.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+Modelo Robusto
+    \end{Verbatim}
+ 
+            
+\prompt{Out}{outcolor}{32}{}
+    
+    \begin{center}
+\begin{tabular}{lclc}
+\toprule
+\textbf{Dep. Variable:}  &      Sales       & \textbf{  No. Observations:  } &      200    \\
+\textbf{Model:}          &       RLM        & \textbf{  Df Residuals:      } &      198    \\
+\textbf{Method:}         &       IRLS       & \textbf{  Df Model:          } &        1    \\
+\textbf{Norm:}           &      HuberT      & \textbf{                     } &             \\
+\textbf{Scale Est.:}     &       mad        & \textbf{                     } &             \\
+\textbf{Cov Type:}       &        H1        & \textbf{                     } &             \\
+\textbf{Date:}           & Sat, 13 Apr 2024 & \textbf{                     } &             \\
+\textbf{Time:}           &     14:33:28     & \textbf{                     } &             \\
+\textbf{No. Iterations:} &        23        & \textbf{                     } &             \\
+\bottomrule
+\end{tabular}
+\begin{tabular}{lcccccc}
+               & \textbf{coef} & \textbf{std err} & \textbf{z} & \textbf{P$> |$z$|$} & \textbf{[0.025} & \textbf{0.975]}  \\
+\midrule
+\textbf{const} &       6.8843  &        0.484     &    14.235  &         0.000        &        5.936    &        7.832     \\
+\textbf{TV}    &       0.0491  &        0.003     &    17.278  &         0.000        &        0.044    &        0.055     \\
+\bottomrule
+\end{tabular}
+%\caption{Robust linear Model Regression Results}
+\end{center}
+
+If the model instance has been used for another fit with different fit parameters, then the fit options might not be the correct ones anymore .
+
+    
+
+    Con este modelo robusto, entonces tenemos la función para predecir Y: -
+Y(unidades vendidas) = 6.8843 + 0.0491X(Gasto en miles de dolares)
+
+Pero además las funciones para los intervalos:
+
+\begin{itemize}
+\tightlist
+\item
+  Valor mínimo = Y(unidades vendidas) = 5.936 + 0.044X(Gasto en miles de
+  dolares)
+\item
+  Valor máximo = Y(unidades vendidas) = 7.832 + 0.055X(Gasto en miles de
+  dolares)
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TV}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+        TV  Sales
+0    230.1   22.1
+1     44.5   10.4
+2     17.2    9.3
+3    151.5   18.5
+4    180.8   12.9
+..     {\ldots}    {\ldots}
+195   38.2    7.6
+196   94.2    9.7
+197  177.0   12.8
+198  283.6   25.5
+199  232.1   13.4
+
+[200 rows x 2 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{muestra\PYZus{}random} \PY{o}{=} \PY{n}{data\PYZus{}publicidad}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TV}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sales}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the randomly selected 5 rows}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{selección aleatoria de 5 datos:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{muestra\PYZus{}random}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+selección aleatoria de 5 datos:
+        TV  Sales
+114   78.2   14.6
+52   216.4   22.6
+6     57.5   11.8
+158   11.7    7.3
+93   250.9   22.2
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{58}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Para responder eligiré los primeros 5 valores de X (\PYZdq{}TV\PYZdq{}) \PYZhy{} Modelo OLS}
+
+\PY{k}{def} \PY{n+nf}{predict\PYZus{}sales}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{sales\PYZus{}prediccion} \PY{o}{=} \PY{l+m+mf}{7.0326} \PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.0475} \PY{o}{*} \PY{n}{x}\PY{p}{)}
+    \PY{k}{return} \PY{n}{sales\PYZus{}prediccion}
+
+\PY{k}{def} \PY{n+nf}{sales\PYZus{}minimo}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{minimo} \PY{o}{=} \PY{l+m+mf}{6.130} \PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.042} \PY{o}{*} \PY{n}{x}\PY{p}{)}
+    \PY{k}{return} \PY{n}{minimo}
+
+\PY{k}{def} \PY{n+nf}{sales\PYZus{}maximo}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{maximo} \PY{o}{=} \PY{l+m+mf}{7.935} \PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.053} \PY{o}{*} \PY{n}{x}\PY{p}{)}
+    \PY{k}{return} \PY{n}{maximo}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 1 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{78.2}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{78.2}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{78.2}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 14.6}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 2 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{216.4}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{216.4}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{216.4}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}}  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 22.6}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 3 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{57.5}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{57.5}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{57.5}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}}  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 11.8}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 4 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{11.7}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{11.7}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{11.7}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}}  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 7.3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 5 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{250.9}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{250.9}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{250.9}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 22.2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Valor 1 (y) predecido: 10.7471 Intervalo: [9.4144 - 12.0796] vs  y real = 14.6
+Valor 2 (y) predecido: 17.3116 Intervalo: [15.218800000000002 - 19.4042] vs  y
+real = 22.6
+Valor 3 (y) predecido: 9.763850000000001 Intervalo: [8.545 - 10.9825] vs  y real
+= 11.8
+Valor 4 (y) predecido: 7.58835 Intervalo: [6.6213999999999995 - 8.5551] vs  y
+real = 7.3
+Valor 5 (y) predecido: 18.95035 Intervalo: [16.6678 - 21.2327] vs  y real = 22.2
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{59}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Para responder eligiré los primeros 5 valores de X (\PYZdq{}TV\PYZdq{})}
+
+\PY{k}{def} \PY{n+nf}{predict\PYZus{}sales}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{sales\PYZus{}prediccion} \PY{o}{=} \PY{l+m+mf}{6.8843} \PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.0491} \PY{o}{*} \PY{n}{x}\PY{p}{)}
+    \PY{k}{return} \PY{n}{sales\PYZus{}prediccion}
+
+\PY{k}{def} \PY{n+nf}{sales\PYZus{}minimo}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{minimo} \PY{o}{=} \PY{l+m+mf}{5.936} \PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.044} \PY{o}{*} \PY{n}{x}\PY{p}{)}
+    \PY{k}{return} \PY{n}{minimo}
+
+\PY{k}{def} \PY{n+nf}{sales\PYZus{}maximo}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{maximo} \PY{o}{=} \PY{l+m+mf}{7.832} \PY{o}{+} \PY{p}{(}\PY{l+m+mf}{0.055} \PY{o}{*} \PY{n}{x}\PY{p}{)}
+    \PY{k}{return} \PY{n}{maximo}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 1 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{78.2}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{78.2}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{78.2}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 14.6}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 2 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{216.4}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{216.4}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{216.4}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}}  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 22.6}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 3 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{57.5}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{57.5}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{57.5}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}}  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 11.8}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 4 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{11.7}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{11.7}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{11.7}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}}  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 7.3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Valor 5 (y) predecido: }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{predict\PYZus{}sales}\PY{p}{(}\PY{l+m+mf}{250.9}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ Intervalo: [}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}minimo}\PY{p}{(}\PY{l+m+mf}{250.9}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ \PYZhy{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{sales\PYZus{}maximo}\PY{p}{(}\PY{l+m+mf}{250.9}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{]}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ vs }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ y real = 22.2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Valor 1 (y) predecido: 10.72392 Intervalo: [9.3768 - 12.133] vs  y real = 14.6
+Valor 2 (y) predecido: 17.50954 Intervalo: [15.4576 - 19.734] vs  y real = 22.6
+Valor 3 (y) predecido: 9.70755 Intervalo: [8.466 - 10.9945] vs  y real = 11.8
+Valor 4 (y) predecido: 7.4587699999999995 Intervalo: [6.4508 - 8.4755] vs  y
+real = 7.3
+Valor 5 (y) predecido: 19.20349 Intervalo: [16.9756 - 21.6315] vs  y real = 22.2
+    \end{Verbatim}
+
+    Conclusión: Se concluye que el modelo no es capaz de
+predecir con precisión dentro del intervalo de confianza del 95\% y esto
+puede deberse a que presenta una gran variabilidad justificada en el
+alto coeficiente de variación y en que el modelo no cumplió el supuesto
+de homocedasticidad.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
